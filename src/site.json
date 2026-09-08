@@ -1,0 +1,37 @@
+{
+  "name": "Younghoon Kang",
+  "title": "Younghoon Kang — On-Device AI",
+  "description": "Undergraduate researcher building video models that keep learning after deployment — on CPUs and embedded GPUs, not clusters.",
+  "url": "",
+  "eyebrow": "SeoulTech / CSE — On-device AI",
+  "headline": ["Continual learning", "that runs on the edge."],
+  "lede": "Undergraduate researcher building video models that keep learning after deployment — on CPUs and embedded GPUs, not clusters. I read a lot of papers about it, and write down what actually held up.",
+  "metrics": [
+    { "value": "+14.1", "unit": " %p", "label": "A-GEM accuracy gain" },
+    { "value": "0.17", "unit": " ms", "label": "new-class enrollment" },
+    { "value": "48", "unit": " → 48+K", "label": "classes, no forgetting" }
+  ],
+  "email": "k22101149@g.seoultech.ac.kr",
+  "github": "https://github.com/stkangyh",
+  "affiliation": "Seoul National University of Science and Technology",
+  "projects": [
+    {
+      "name": "coad-mini",
+      "tagline": "continual learning for streaming video action recognition",
+      "body": "End-to-end pipeline learning new actions over 8 sequential stages without catastrophic forgetting, plus few-shot enrollment with live model hot-swap and OOD detection. Shipped as a FastAPI webcam demo.",
+      "stack": ["CLIP ViT-B/32", "GRU", "A-GEM", "FastAPI", "HF Spaces"]
+    },
+    {
+      "name": "KBO outcome prediction",
+      "tagline": "end-to-end sabermetrics ML pipeline",
+      "body": "~60 engineered features over 2,435 games (2023–2026), an Optuna-tuned gradient-boosting ensemble with Platt calibration, reaching ROC-AUC ≈ 0.70. Diagnosed and fixed a feature-staleness leak in the rolling-stat blend.",
+      "stack": ["XGBoost", "LightGBM", "CatBoost", "Optuna"]
+    },
+    {
+      "name": "PPO from scratch",
+      "tagline": "collapse recovery and action-space ablation",
+      "body": "Actor-critic, GAE and rollout buffer written from scratch for CarRacing-v3 from raw pixels; traced a training collapse to three root causes and recovered a stable agent at clean mean ~667.",
+      "stack": ["PyTorch", "Gymnasium", "PPO"]
+    }
+  ]
+}

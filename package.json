@@ -1,0 +1,10 @@
+{
+  "name": "younghoon-kang-homepage",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build/build.mjs",
+    "serve": "python3 -m http.server 5173 --directory dist"
+  },
+  "engines": { "node": ">=20" }
+}
