@@ -16,6 +16,11 @@ Notion at request time, so the site stays fast and stays up even when Notion is 
    blocks, images and LaTeX equations all carry over.
 4. Set `Status` to **Published** and set a `Published` date.
 
+A row needs a takeaway or a body to be published. If it has neither, the build
+skips it and says so in the log — one stray toggle on an empty row cannot put a
+blank page on the site. Missing paper title or link are reported as warnings but
+still publish.
+
 It goes live at the next scheduled build (06:00 and 18:00 KST). To publish
 immediately, run the workflow by hand: Actions → *Build and deploy* → *Run workflow*.
 
