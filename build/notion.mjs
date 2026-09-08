@@ -87,6 +87,45 @@ export function richText(rt = []) {
 
 export const plain = (rt = []) => rt.map(t => t.plain_text).join('');
 
+// A heading whose section holds nothing is an unfinished template, not content.
+// Drop it before rendering: walk from each heading to the next one at the same
+// or higher level, and if nothing in between produces output, the heading goes.
+// Runs to a fixed point, because removing a child section can empty its parent.
+const HEADING_LEVEL = { heading_1: 1, heading_2: 2, heading_3: 3 };
+
+function producesOutput(b) {
+  if (HEADING_LEVEL[b.type]) return false;
+  if (b.type === 'paragraph') return plain(b.paragraph.rich_text).trim() !== '';
+  if (b.type === 'table_of_contents' || b.type === 'breadcrumb') return false;
+  if (b.type === 'column_list' || b.type === 'synced_block' || b.type === 'column') {
+    return Boolean(b.__children?.some(producesOutput));
+  }
+  return true;
+}
+
+export function dropEmptySections(blocks) {
+  let list = blocks;
+  for (let pass = 0; pass < 8; pass++) {
+    const drop = new Set();
+    for (let i = 0; i < list.length; i++) {
+      const level = HEADING_LEVEL[list[i].type];
+      if (!level) continue;
+      // A toggle heading carries its section in its children.
+      if (list[i].__children?.some(producesOutput)) continue;
+      let filled = false;
+      for (let j = i + 1; j < list.length; j++) {
+        const other = HEADING_LEVEL[list[j].type];
+        if (other && other <= level) break;
+        if (producesOutput(list[j])) { filled = true; break; }
+      }
+      if (!filled) drop.add(i);
+    }
+    if (!drop.size) break;
+    list = list.filter((_, i) => !drop.has(i));
+  }
+  return list;
+}
+
 // Renders a flat block list, grouping consecutive list items.
 // onImage(url, blockId) -> returns the src to use (lets the caller localise files).
 export function renderBlocks(blocks, onImage = u => u) {

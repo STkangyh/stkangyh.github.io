@@ -2,7 +2,7 @@ import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { dirname, join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Notion, renderBlocks, richText, plain } from './notion.mjs';
+import { Notion, renderBlocks, dropEmptySections, plain } from './notion.mjs';
 import { indexPage, papersIndexPage, articlePage } from './templates.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -105,15 +105,18 @@ async function fromNotion() {
   const reviews = [];
   for (const page of pages) {
     const r = mapReview(page);
-    const blocks = await notion.children(page.id);
+    const raw = await notion.children(page.id);
+    const blocks = dropEmptySections(raw);
     const { onImage, jobs } = imageCollector();
     const { html, flags } = renderBlocks(blocks, onImage);
+    const dropped = raw.length - blocks.length;
     r.html = html;
     r.math = flags.math;
     r.code_blocks = flags.code;
     r.imageJobs = jobs;
     reviews.push(r);
-    log(`fetched "${r.title}" (${blocks.length} blocks)`);
+    log(`fetched "${r.title}" (${blocks.length} blocks`
+      + (dropped ? `, ${dropped} empty section heading${dropped === 1 ? '' : 's'} dropped` : '') + ')');
   }
   return reviews;
 }
