@@ -7,7 +7,7 @@
   --line:#e5e3da; --line2:#d6d3c8;
   --accent:#9A3D1E; --tint:#F7E9E2;
   --code-str:#3B6D11; --code-num:#185FA5; --code-kw:#9A3D1E;
-  --sans:'Instrument Sans','Pretendard Variable',-apple-system,'Apple SD Gothic Neo',sans-serif;
+  --sans:'Instrument Sans',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
   --w:720px;
 }

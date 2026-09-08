@@ -69,8 +69,9 @@ and blocks are rendered to HTML by `build/notion.mjs`.
 
 Instrument Sans (600 headings / 400 body), JetBrains Mono for figures and labels,
 rust accent `#9A3D1E` on warm paper `#faf9f5`, single 720px column, light and dark.
-KaTeX and highlight.js load from a CDN only on pages that actually contain
-maths or code. Syntax colours come from the site palette, not a vendor theme,
+The site is English throughout; Korean, if it appears, falls back to a system
+face rather than a webfont. KaTeX and highlight.js load from a CDN only on
+pages that actually contain maths or code. Syntax colours come from the site palette, not a vendor theme,
 so code reads correctly in both modes.
 
 ## Updating the CV
