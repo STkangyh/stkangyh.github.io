@@ -10,6 +10,7 @@ export class Notion {
     for (let attempt = 0; attempt < 4; attempt++) {
       const res = await fetch(url, {
         ...init,
+        signal: AbortSignal.timeout(20_000),
         headers: {
           Authorization: `Bearer ${this.token}`,
           'Notion-Version': VERSION,

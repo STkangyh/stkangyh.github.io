@@ -3,8 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node build/build.mjs",
+    "dev": "node build/dev.js",
+    "build": "node build/build.js",
     "serve": "python3 -m http.server 5173 --directory dist"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }

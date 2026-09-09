@@ -38,7 +38,7 @@ jobs:
             echo "::error::NOTION_TOKEN / NOTION_DB_ID are not set. Add them as repository secrets."
             exit 1
           fi
-          node build/build.mjs
+          node build/build.js
 
       - uses: actions/upload-pages-artifact@v3
         with:

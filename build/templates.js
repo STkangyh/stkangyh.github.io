@@ -1,4 +1,4 @@
-import { esc } from './notion.mjs';
+import { esc } from './notion.js';
 
 const KATEX = '0.16.11';
 const HLJS = '11.10.0';
@@ -32,7 +32,7 @@ function footer(site, builtAt) {
 </footer>`;
 }
 
-export function layout({ site, base = '', title, description, body, math, code, builtAt, canonical }) {
+export function layout({ site, base = '', title, description, body, math, code, builtAt, canonical, cssHref = 'styles.css' }) {
   const assets = [];
   if (math) {
     assets.push(`<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/${KATEX}/katex.min.css">`);
@@ -57,7 +57,7 @@ ${canonical ? `<link rel="canonical" href="${esc(canonical)}">` : ''}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="${base}styles.css">
+<link rel="stylesheet" href="${base}${cssHref}">
 ${assets.join('\n')}
 </head>
 <body>
@@ -85,7 +85,7 @@ export function reviewRow(r, base) {
   </a>`;
 }
 
-export function indexPage({ site, reviews, builtAt }) {
+export function indexPage({ site, reviews, builtAt, cssHref }) {
   const recent = reviews.slice(0, 5);
   const metrics = site.metrics.map(m =>
     `<div class="metric"><div class="v">${esc(m.value)}<small>${esc(m.unit)}</small></div><div class="k">${esc(m.label)}</div></div>`
@@ -120,10 +120,10 @@ export function indexPage({ site, reviews, builtAt }) {
   ${projects}
 </section>`;
 
-  return layout({ site, base: '', title: site.title, description: site.description, body, builtAt });
+  return layout({ site, base: '', title: site.title, description: site.description, body, builtAt, cssHref });
 }
 
-export function papersIndexPage({ site, reviews, builtAt }) {
+export function papersIndexPage({ site, reviews, builtAt, cssHref }) {
   const body = `<div class="hero">
   <div class="eyebrow">Paper reviews</div>
   <h1>What I read,<br>and what held up.</h1>
@@ -136,11 +136,11 @@ export function papersIndexPage({ site, reviews, builtAt }) {
   return layout({
     site, base: '../', title: `Paper reviews — ${site.name}`,
     description: 'Reviews of papers on continual learning, efficient encoders and video understanding.',
-    body, builtAt,
+    body, builtAt, cssHref,
   });
 }
 
-export function articlePage({ site, review: r, prev, next, builtAt }) {
+export function articlePage({ site, review: r, prev, next, builtAt, cssHref }) {
   const links = [
     r.link ? `<a class="btn" href="${esc(r.link)}">Paper ↗</a>` : '',
     r.code ? `<a class="btn" href="${esc(r.code)}">Code ↗</a>` : '',
@@ -165,6 +165,6 @@ ${r.html || '<p class="empty">This review has no body yet.</p>'}
     site, base: '../../',
     title: `${r.title} — ${site.name}`,
     description: r.takeaway || r.paper || site.description,
-    body, math: r.math, code: r.code_blocks, builtAt,
+    body, math: r.math, code: r.code_blocks, builtAt, cssHref,
   });
 }

@@ -1,9 +1,9 @@
 import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { dirname, join, extname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { Notion, renderBlocks, dropEmptySections, plain } from './notion.mjs';
-import { indexPage, papersIndexPage, articlePage } from './templates.mjs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { Notion, renderBlocks, dropEmptySections, plain } from './notion.js';
+import { indexPage, papersIndexPage, articlePage } from './templates.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
@@ -182,23 +182,28 @@ async function main() {
 
   const builtAt = new Date().toISOString().slice(0, 10);
 
+  // Hash the stylesheet into its own filename. Pages sets max-age=600, so an
+  // unhashed styles.css can serve old CSS against new markup for ten minutes.
+  const css = await readFile(join(ROOT, 'src', 'styles.css'), 'utf8');
+  const cssHref = `styles.${createHash('sha1').update(css).digest('hex').slice(0, 8)}.css`;
+
   await rm(DIST, { recursive: true, force: true });
   await mkdir(join(DIST, 'papers'), { recursive: true });
 
-  await writeFile(join(DIST, 'index.html'), indexPage({ site, reviews, builtAt }));
-  await writeFile(join(DIST, 'papers', 'index.html'), papersIndexPage({ site, reviews, builtAt }));
+  await writeFile(join(DIST, 'index.html'), indexPage({ site, reviews, builtAt, cssHref }));
+  await writeFile(join(DIST, 'papers', 'index.html'), papersIndexPage({ site, reviews, builtAt, cssHref }));
 
   for (let i = 0; i < reviews.length; i++) {
     const r = reviews[i];
     const dir = join(DIST, 'papers', r.slug);
     await mkdir(dir, { recursive: true });
     await writeFile(join(dir, 'index.html'), articlePage({
-      site, review: r, prev: reviews[i - 1], next: reviews[i + 1], builtAt,
+      site, review: r, prev: reviews[i - 1], next: reviews[i + 1], builtAt, cssHref,
     }));
     if (r.imageJobs?.size) await downloadImages(r.imageJobs);
   }
 
-  await cp(join(ROOT, 'src', 'styles.css'), join(DIST, 'styles.css'));
+  await cp(join(ROOT, 'src', 'styles.css'), join(DIST, cssHref));
   await cp(join(ROOT, 'public'), DIST, { recursive: true });
   await writeFile(join(DIST, '.nojekyll'), '');
 
@@ -206,4 +211,9 @@ async function main() {
     + (skipped.length ? ` — ${skipped.length} skipped as empty` : ''));
 }
 
-main().catch(err => { console.error(err); process.exit(1); });
+export { main as build };
+
+// Only run when invoked directly; the dev server imports build() instead.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch(err => { console.error(err); process.exit(1); });
+}

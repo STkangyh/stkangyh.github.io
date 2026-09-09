@@ -56,7 +56,7 @@ NOTION_TOKEN=secret_xxx NOTION_DB_ID=0827b9d0308445f78ee1d8fe9fe2f118 npm run bu
 ## Layout
 
 ```
-build/       build.mjs (orchestration), notion.mjs (API + block renderer), templates.mjs (HTML)
+build/       build.js (orchestration), notion.js (Notion API + block renderer), templates.js (HTML)
 src/         styles.css (design system), site.json (bio, metrics, projects)
 public/      cv.pdf and anything else copied verbatim
 data/        fixture.json — offline specimen review
@@ -64,7 +64,7 @@ dist/        generated output (gitignored)
 ```
 
 The build has **no npm dependencies**. Notion is called over REST with `fetch`,
-and blocks are rendered to HTML by `build/notion.mjs`.
+and blocks are rendered to HTML by `build/notion.js`.
 
 ## Design
 
