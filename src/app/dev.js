@@ -6,12 +6,11 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { watch } from 'node:fs';
 import { join, extname, resolve, sep } from 'node:path';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { build } from './build.js';
+import { paths } from '../shared/config/index.js';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const DIST = join(ROOT, 'dist');
+const ROOT = paths.root;
+const DIST = paths.dist;
 const PORT = Number(process.env.PORT || 5173);
 
 const TYPES = {
@@ -77,7 +76,7 @@ async function rebuild(reason) {
   }
 }
 
-for (const dir of ['src', 'build', 'data', 'public']) {
+for (const dir of ['src', 'content', 'public']) {
   watch(join(ROOT, dir), { recursive: true }, (_e, name) => {
     clearTimeout(timer);
     timer = setTimeout(() => rebuild(`${dir}/${name}`), 120);
@@ -87,6 +86,6 @@ for (const dir of ['src', 'build', 'data', 'public']) {
 await rebuild('startup');
 server.listen(PORT, () => {
   console.log(`\n  dev server  http://localhost:${PORT}`);
-  console.log(`  watching    src/ build/ data/ public/`);
-  console.log(`  note        edits to build/dev.js itself need a restart\n`);
+  console.log(`  watching    src/ content/ public/`);
+  console.log(`  note        edits to src/app/dev.js itself need a restart\n`);
 });

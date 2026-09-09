@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node build/dev.js",
-    "build": "node build/build.js",
+    "dev": "node src/app/dev.js",
+    "build": "node src/app/build.js",
     "serve": "python3 -m http.server 5173 --directory dist"
   },
   "engines": {

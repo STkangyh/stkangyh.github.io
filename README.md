@@ -29,10 +29,10 @@ immediately, run the workflow by hand: Actions → *Build and deploy* → *Run w
 
 ```bash
 npm run build      # writes dist/
-npm run serve      # http://localhost:5173
+npm run dev        # http://localhost:5173, rebuilds and reloads on save
 ```
 
-Without `NOTION_TOKEN` the build falls back to `data/fixture.json`, a specimen
+Without `NOTION_TOKEN` the build falls back to `content/fixture.json`, a specimen
 review that exercises every supported block type. Use it to check layout changes
 without touching Notion.
 
@@ -55,16 +55,36 @@ NOTION_TOKEN=secret_xxx NOTION_DB_ID=0827b9d0308445f78ee1d8fe9fe2f118 npm run bu
 
 ## Layout
 
+The code follows Feature-Sliced Design. Layers import strictly downwards —
+`app` → `pages` → `widgets` → `entities` → `shared` — so nothing in `shared/`
+knows what a review is, and nothing in `app/` knows how a Notion block becomes
+HTML.
+
 ```
-build/       build.js (orchestration), notion.js (Notion API + block renderer), templates.js (HTML)
-src/         styles.css (design system), site.json (bio, metrics, projects)
-public/      cv.pdf and anything else copied verbatim
-data/        fixture.json — offline specimen review
-dist/        generated output (gitignored)
+src/
+  app/                  build.js (entry, orchestration), dev.js (watch + reload)
+  pages/                one module per page type
+    home/ papers/ paper/
+  widgets/              composed sections shared across pages
+    layout/ header/ footer/ review-list/
+  entities/             the domain
+    review/             model.js (Notion row -> review, vetting), api.js (fetching)
+    site/               bio, metrics and projects
+  shared/               knows nothing about this site in particular
+    api/notion/         client.js, rich-text.js, blocks.js
+    lib/                esc, slugify, dates, hashing, logging, downloads
+    config/             paths, env, pinned CDN versions
+    ui/styles.css       the whole design
+content/                site.json (bio) and fixture.json (offline specimen)
+public/                 cv.pdf and anything else copied verbatim
+dist/                   generated output (gitignored)
 ```
 
+There is no `features/` layer: the site has exactly one interactive behaviour
+(the theme toggle) and it lives with the header that owns it.
+
 The build has **no npm dependencies**. Notion is called over REST with `fetch`,
-and blocks are rendered to HTML by `build/notion.js`.
+and blocks are rendered to HTML by `src/shared/api/notion/blocks.js`.
 
 ## Design
 

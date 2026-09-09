@@ -1,0 +1,21 @@
+[
+  {
+    "title": "Design specimen \u2014 every block type",
+    "slug": "design-specimen",
+    "paper": "Not a real paper. This row exists so the site can be built and inspected without a Notion token.",
+    "authors": "Fixture",
+    "venue": "arXiv",
+    "year": 2026,
+    "topics": [
+      "continual learning",
+      "on-device"
+    ],
+    "takeaway": "A local fixture that exercises every Notion block the renderer supports, so layout regressions show up before anything reaches the real site.",
+    "link": "https://arxiv.org/abs/2309.14062",
+    "code": "https://github.com/stkangyh",
+    "sortKey": "2026-09-08",
+    "math": true,
+    "html": "<h2>Heading two</h2>\n<p>A paragraph with <strong>bold</strong>, <em>italic</em>, <s>struck</s>, <code>inline_code()</code> and a <a href=\"https://arxiv.org\">link</a>. Inline math sits here: \\(d_M(x,\\mu) = \\sqrt{(x-\\mu)^\\top \\Sigma^{-1} (x-\\mu)}\\).</p>\n<h3>Heading three</h3>\n<ul><li><span>A bulleted item</span></li><li><span>Another, with <code>code</code> inside</span></li></ul>\n<ol><li><span>First numbered item</span></li><li><span>Second numbered item</span></li></ol>\n<ul class=\"todo\"><li><span aria-hidden=\"true\">\u2611</span> <span>A checked to-do</span></li><li><span aria-hidden=\"true\">\u2610</span> <span>An unchecked one</span></li></ul>\n<blockquote>A quote block, for the line from a paper worth keeping verbatim.</blockquote>\n<div class=\"callout\"><span class=\"ico\" aria-hidden=\"true\">\u26a0\ufe0f</span><div>A callout \u2014 useful for the caveat you want the reader not to miss.</div></div>\n<div class=\"eq\">$$\\mathcal{L} = \\sum_{t=1}^{T} \\ell(f_\\theta(x_t), y_t) \\quad \\text{s.t.} \\quad g^\\top g_{\\text{ref}} \\geq 0$$</div>\n<pre><code class=\"language-python\">import torch\n\ndef project(g, g_ref):\n    \"\"\"A-GEM: project the gradient when it conflicts with the reference.\"\"\"\n    dot = torch.dot(g, g_ref)\n    if dot &gt;= 0:\n        return g\n    return g - dot / g_ref.dot(g_ref) * g_ref</code></pre>\n<hr>\n<p>And a closing paragraph after a divider.</p>",
+    "hasCodeBlocks": true
+  }
+]
