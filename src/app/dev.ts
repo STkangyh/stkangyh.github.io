@@ -92,5 +92,5 @@ await rebuild('startup');
 server.listen(PORT, () => {
   console.log(`\n  dev server  http://localhost:${PORT}`);
   console.log(`  watching    src/ content/ public/`);
-  console.log(`  note        edits to src/app/dev.js itself need a restart\n`);
+  console.log(`  note        edits to src/app/dev.ts itself need a restart\n`);
 });
