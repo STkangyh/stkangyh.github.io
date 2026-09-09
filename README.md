@@ -28,9 +28,15 @@ immediately, run the workflow by hand: Actions → *Build and deploy* → *Run w
 ## Local development
 
 ```bash
-npm run build      # writes dist/
 npm run dev        # http://localhost:5173, rebuilds and reloads on save
+npm run build      # writes dist/
+npm run typecheck  # tsc --noEmit
 ```
+
+The source is TypeScript, run **directly** — Node 22.6+ strips types at load,
+so `node src/app/build.ts` needs no compile step and no bundler. TypeScript
+itself is a devDependency used only by `npm run typecheck`; the build installs
+nothing.
 
 Without `NOTION_TOKEN` the build falls back to `content/fixture.json`, a specimen
 review that exercises every supported block type. Use it to check layout changes
@@ -62,16 +68,16 @@ HTML.
 
 ```
 src/
-  app/                  build.js (entry, orchestration), dev.js (watch + reload)
+  app/                  build.ts (entry, orchestration), dev.ts (watch + reload)
   pages/                one module per page type
     home/ papers/ paper/
   widgets/              composed sections shared across pages
     layout/ header/ footer/ review-list/
   entities/             the domain
-    review/             model.js (Notion row -> review, vetting), api.js (fetching)
+    review/             model.ts (row -> review, vetting), api.ts (fetching), types.ts
     site/               bio, metrics and projects
   shared/               knows nothing about this site in particular
-    api/notion/         client.js, rich-text.js, blocks.js
+    api/notion/         client.ts, rich-text.ts, blocks.ts, types.ts
     lib/                esc, slugify, dates, hashing, logging, downloads
     config/             paths, env, pinned CDN versions
     ui/styles.css       the whole design
@@ -84,7 +90,7 @@ There is no `features/` layer: the site has exactly one interactive behaviour
 (the theme toggle) and it lives with the header that owns it.
 
 The build has **no npm dependencies**. Notion is called over REST with `fetch`,
-and blocks are rendered to HTML by `src/shared/api/notion/blocks.js`.
+and blocks are rendered to HTML by `src/shared/api/notion/blocks.ts`.
 
 ## Design
 

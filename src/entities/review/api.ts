@@ -1,17 +1,21 @@
 import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path';
-import { NotionClient, renderBlocks, dropEmptySections } from '../../shared/api/notion/index.js';
-import { paths, notionEnv } from '../../shared/config/index.js';
-import { slugify, dateLabel, hash, log } from '../../shared/lib/index.js';
-import { fromNotionPage } from './model.js';
+import { NotionClient, renderBlocks, dropEmptySections } from '../../shared/api/notion/index.ts';
+import type { ImageResolver } from '../../shared/api/notion/index.ts';
+import { paths, notionEnv } from '../../shared/config/index.ts';
+import { slugify, dateLabel, hash, log } from '../../shared/lib/index.ts';
+import type { DownloadJobs } from '../../shared/lib/index.ts';
+import { fromNotionPage } from './model.ts';
+import type { Review } from './types.ts';
 
 // Notion file URLs are signed and expire within the hour, so anything served
 // from their storage has to be copied into the build output.
-const isExpiring = url => /amazonaws\.com|notion-static\.com|X-Amz-/i.test(url);
+const isExpiring = (url: string): boolean =>
+  /amazonaws\.com|notion-static\.com|X-Amz-/i.test(url);
 
-function imageCollector() {
-  const jobs = new Map();
-  const onImage = (url, blockId) => {
+function imageCollector(): { onImage: ImageResolver; jobs: DownloadJobs } {
+  const jobs: DownloadJobs = new Map();
+  const onImage: ImageResolver = (url, blockId) => {
     if (!isExpiring(url)) return url;
     let ext = extname(new URL(url).pathname).toLowerCase();
     if (!/^\.(png|jpe?g|gif|webp|avif|svg)$/.test(ext)) ext = '.png';
@@ -22,16 +26,16 @@ function imageCollector() {
   return { onImage, jobs };
 }
 
-export async function fetchPublished() {
-  const notion = new NotionClient(notionEnv.token);
+export async function fetchPublished(): Promise<Review[]> {
+  const notion = new NotionClient(notionEnv.token as string);
   log('querying published reviews');
-  const pages = await notion.queryAll(notionEnv.databaseId, {
+  const pages = await notion.queryAll(notionEnv.databaseId as string, {
     filter: { property: 'Status', select: { equals: 'Published' } },
     sorts: [{ property: 'Published', direction: 'descending' }],
   });
   log(`${pages.length} published`);
 
-  const reviews = [];
+  const reviews: Review[] = [];
   for (const page of pages) {
     const review = fromNotionPage(page);
     const raw = await notion.children(page.id);
@@ -49,15 +53,15 @@ export async function fetchPublished() {
 }
 
 // Offline source, so layout work does not need a Notion token.
-export async function fetchFixture() {
+export async function fetchFixture(): Promise<Review[]> {
   const raw = await readFile(join(paths.content, 'fixture.json'), 'utf8');
-  return JSON.parse(raw).map(r => ({
+  return (JSON.parse(raw) as Review[]).map(r => ({
     ...r,
     slug: r.slug || slugify(r.title, 'review'),
     dateLabel: r.dateLabel || dateLabel(r.sortKey),
-    imageJobs: new Map(),
+    imageJobs: new Map<string, string>(),
   }));
 }
 
-export const fetchReviews = () =>
+export const fetchReviews = (): Promise<Review[]> =>
   notionEnv.configured ? fetchPublished() : fetchFixture();

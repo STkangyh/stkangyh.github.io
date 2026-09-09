@@ -1,7 +1,17 @@
-import { renderLayout } from '../../widgets/layout/index.js';
-import { renderReviewList } from '../../widgets/review-list/index.js';
+import { renderLayout } from '../../widgets/layout/index.ts';
+import { renderReviewList } from '../../widgets/review-list/index.ts';
+import type { Site } from '../../entities/site/index.ts';
+import type { Review } from '../../entities/review/index.ts';
 
-export function renderPapersPage({ site, reviews, builtAt, cssHref }) {
+export interface PageContext {
+  site: Site;
+  reviews: Review[];
+  builtAt: string;
+  cssHref: string;
+}
+
+
+export function renderPapersPage({ site, reviews, builtAt, cssHref }: PageContext): string {
   const body = `<div class="hero">
   <div class="eyebrow">Paper reviews</div>
   <h1>What I read,<br>and what held up.</h1>

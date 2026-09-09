@@ -1,11 +1,12 @@
-import { esc, safeHref } from '../../lib/html.js';
+import { esc, safeHref } from '../../lib/html.ts';
+import type { RichTextItem } from './types.ts';
 
 // Notion rich text -> HTML, preserving annotations and links.
-export function richText(rt = []) {
+export function richText(rt: RichTextItem[] = []): string {
   return rt.map(t => {
-    if (t.type === 'equation') return `\\(${esc(t.equation.expression)}\\)`;
+    if (t.type === 'equation' && t.equation) return `\\(${esc(t.equation.expression)}\\)`;
     let html = esc(t.plain_text);
-    const a = t.annotations || {};
+    const a = t.annotations ?? {};
     if (a.code) html = `<code>${html}</code>`;
     if (a.bold) html = `<strong>${html}</strong>`;
     if (a.italic) html = `<em>${html}</em>`;
@@ -17,4 +18,5 @@ export function richText(rt = []) {
 }
 
 // The same text with all formatting dropped — for titles, slugs and metadata.
-export const plain = (rt = []) => rt.map(t => t.plain_text).join('');
+export const plain = (rt: RichTextItem[] = []): string =>
+  rt.map(t => t.plain_text).join('');

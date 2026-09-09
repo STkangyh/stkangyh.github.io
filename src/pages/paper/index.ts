@@ -1,7 +1,19 @@
-import { esc } from '../../shared/lib/index.js';
-import { renderLayout } from '../../widgets/layout/index.js';
+import { esc } from '../../shared/lib/index.ts';
+import { renderLayout } from '../../widgets/layout/index.ts';
+import type { Site } from '../../entities/site/index.ts';
+import type { Review } from '../../entities/review/index.ts';
 
-export function renderPaperPage({ site, review: r, prev, next, builtAt, cssHref }) {
+export interface PaperPageContext {
+  site: Site;
+  review: Review;
+  /** Neighbours in publication order, for the pager. Absent at either end. */
+  prev?: Review | undefined;
+  next?: Review | undefined;
+  builtAt: string;
+  cssHref: string;
+}
+
+export function renderPaperPage({ site, review: r, prev, next, builtAt, cssHref }: PaperPageContext): string {
   const links = [
     r.link ? `<a class="btn" href="${esc(r.link)}">Paper ↗</a>` : '',
     r.code ? `<a class="btn" href="${esc(r.code)}">Code ↗</a>` : '',

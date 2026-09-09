@@ -6,15 +6,15 @@ import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-import { paths, notionEnv } from '../shared/config/index.js';
-import { hash, assignUniqueSlugs, downloadAll, log } from '../shared/lib/index.js';
-import { loadSite } from '../entities/site/index.js';
-import { fetchReviews, vet, byNewestFirst } from '../entities/review/index.js';
-import { renderHomePage } from '../pages/home/index.js';
-import { renderPapersPage } from '../pages/papers/index.js';
-import { renderPaperPage } from '../pages/paper/index.js';
+import { paths, notionEnv } from '../shared/config/index.ts';
+import { hash, assignUniqueSlugs, downloadAll, log } from '../shared/lib/index.ts';
+import { loadSite } from '../entities/site/index.ts';
+import { fetchReviews, vet, byNewestFirst } from '../entities/review/index.ts';
+import { renderHomePage } from '../pages/home/index.ts';
+import { renderPapersPage } from '../pages/papers/index.ts';
+import { renderPaperPage } from '../pages/paper/index.ts';
 
-export async function build() {
+export async function build(): Promise<void> {
   if (!notionEnv.configured) {
     console.warn('! NOTION_TOKEN / NOTION_DB_ID not set — building from content/fixture.json');
   }

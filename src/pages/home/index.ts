@@ -1,14 +1,24 @@
-import { esc } from '../../shared/lib/index.js';
-import { renderLayout } from '../../widgets/layout/index.js';
-import { renderReviewList } from '../../widgets/review-list/index.js';
+import { esc } from '../../shared/lib/index.ts';
+import { renderLayout } from '../../widgets/layout/index.ts';
+import { renderReviewList } from '../../widgets/review-list/index.ts';
+import type { Site, Metric, Project } from '../../entities/site/index.ts';
+import type { Review } from '../../entities/review/index.ts';
+
+export interface PageContext {
+  site: Site;
+  reviews: Review[];
+  builtAt: string;
+  cssHref: string;
+}
+
 
 const RECENT = 5;
 
-const renderMetrics = metrics => metrics.map(m =>
+const renderMetrics = (metrics: Metric[]): string => metrics.map(m =>
   `<div class="metric"><div class="v">${esc(m.value)}<small>${esc(m.unit)}</small></div><div class="k">${esc(m.label)}</div></div>`
 ).join('');
 
-const renderProjects = projects => projects.map((p, n) =>
+const renderProjects = (projects: Project[]): string => projects.map((p, n) =>
   `<div class="proj"><div class="n">${String(n + 1).padStart(2, '0')}</div><div>
     <div class="pt">${esc(p.name)} <span>— ${esc(p.tagline)}</span></div>
     <div class="pd">${esc(p.body)}</div>
@@ -16,7 +26,7 @@ const renderProjects = projects => projects.map((p, n) =>
   </div></div>`
 ).join('');
 
-export function renderHomePage({ site, reviews, builtAt, cssHref }) {
+export function renderHomePage({ site, reviews, builtAt, cssHref }: PageContext): string {
   const recent = reviews.slice(0, RECENT);
   const body = `<div class="hero">
   <div class="eyebrow">${esc(site.eyebrow)}</div>

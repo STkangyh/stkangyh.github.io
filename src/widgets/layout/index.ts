@@ -1,12 +1,27 @@
-import { esc } from '../../shared/lib/index.js';
-import { cdn } from '../../shared/config/index.js';
-import { renderHeader, themeBootScript, themeScript } from '../header/index.js';
-import { renderFooter } from '../footer/index.js';
+import { esc } from '../../shared/lib/index.ts';
+import { cdn } from '../../shared/config/index.ts';
+import { renderHeader, themeBootScript, themeScript } from '../header/index.ts';
+import { renderFooter } from '../footer/index.ts';
+import type { Site } from '../../entities/site/index.ts';
+
+export interface LayoutOptions {
+  site: Site;
+  /** Path back to the site root from the page being rendered. */
+  base?: string;
+  title: string;
+  description: string;
+  body: string;
+  math?: boolean;
+  code?: boolean;
+  builtAt: string;
+  canonical?: string;
+  cssHref?: string;
+}
 
 // KaTeX and highlight.js are pulled in only by pages that actually contain
 // maths or code. A page without either references no external script at all.
-function conditionalAssets({ math, code }) {
-  const out = [];
+function conditionalAssets({ math, code }: { math: boolean; code: boolean }): string {
+  const out: string[] = [];
   if (math) {
     out.push(`<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/${cdn.katex}/katex.min.css">`);
     out.push(`<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/${cdn.katex}/katex.min.js"></script>`);
@@ -22,7 +37,7 @@ function conditionalAssets({ math, code }) {
 export function renderLayout({
   site, base = '', title, description, body,
   math = false, code = false, builtAt, canonical, cssHref = 'styles.css',
-}) {
+}: LayoutOptions): string {
   return `<!doctype html>
 <html lang="en">
 <head>

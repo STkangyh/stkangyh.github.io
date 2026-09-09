@@ -3,11 +3,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node src/app/dev.js",
-    "build": "node src/app/build.js",
+    "dev": "node src/app/dev.ts",
+    "build": "node src/app/build.ts",
+    "typecheck": "tsc --noEmit",
     "serve": "python3 -m http.server 5173 --directory dist"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.6"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.0",
+    "typescript": "^7.0.2"
   }
 }

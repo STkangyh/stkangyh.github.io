@@ -1,9 +1,10 @@
-import { esc } from '../../shared/lib/index.js';
+import { esc } from '../../shared/lib/index.ts';
+import type { Review } from '../../entities/review/index.ts';
 
-const venueLine = r => [r.authors, [r.venue, r.year].filter(Boolean).join(' ')]
+const venueLine = (r: Review): string => [r.authors, [r.venue, r.year].filter(Boolean).join(' ')]
   .filter(Boolean).join(' · ');
 
-export function renderReviewRow(review, base) {
+export function renderReviewRow(review: Review, base: string): string {
   const r = review;
   const tags = (r.topics || []).map(t => `<span class="tag">${esc(t)}</span>`).join('');
   return `<a class="rev" href="${base}papers/${esc(r.slug)}/">
@@ -14,7 +15,7 @@ export function renderReviewRow(review, base) {
   </a>`;
 }
 
-export function renderReviewList({ reviews, base }) {
+export function renderReviewList({ reviews, base }: { reviews: Review[]; base: string }): string {
   if (!reviews.length) return '<p class="empty">No reviews published yet.</p>';
   return reviews.map(r => renderReviewRow(r, base)).join('\n');
 }

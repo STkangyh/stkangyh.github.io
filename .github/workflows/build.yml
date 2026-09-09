@@ -27,7 +27,16 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # 22.6+ runs .ts directly by stripping types, so the build itself
+          # installs nothing. The type checker below is a devDependency.
+          node-version: '24'
+          cache: npm
+
+      - name: Install type checker
+        run: npm ci
+
+      - name: Check types
+        run: npm run typecheck
 
       - name: Build site
         env:
@@ -38,7 +47,7 @@ jobs:
             echo "::error::NOTION_TOKEN / NOTION_DB_ID are not set. Add them as repository secrets."
             exit 1
           fi
-          node src/app/build.js
+          node src/app/build.ts
 
       - uses: actions/upload-pages-artifact@v3
         with:

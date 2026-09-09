@@ -3,30 +3,31 @@
 // not — everything else it offers (hashing, minification) is already here or
 // not worth a dependency tree.
 import { createServer } from 'node:http';
+import type { ServerResponse } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { watch } from 'node:fs';
 import { join, extname, resolve, sep } from 'node:path';
-import { build } from './build.js';
-import { paths } from '../shared/config/index.js';
+import { build } from './build.ts';
+import { paths } from '../shared/config/index.ts';
 
 const ROOT = paths.root;
 const DIST = paths.dist;
 const PORT = Number(process.env.PORT || 5173);
 
-const TYPES = {
+const TYPES: Record<string, string> = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8', '.json': 'application/json',
+  '.ts': 'text/javascript; charset=utf-8', '.json': 'application/json',
   '.pdf': 'application/pdf', '.svg': 'image/svg+xml', '.png': 'image/png',
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif',
   '.webp': 'image/webp', '.avif': 'image/avif', '.woff2': 'font/woff2',
 };
 
-const RELOAD = `<script>new EventSource('/__reload').onmessage=()=>location.reload()</script>`;
+const RELOAD: string = `<script>new EventSource('/__reload').onmessage=()=>location.reload()</script>`;
 
-let clients = [];
+let clients: ServerResponse[] = [];
 
 const server = createServer(async (req, res) => {
-  const path = decodeURIComponent((req.url || '/').split('?')[0]);
+  const path = decodeURIComponent((req.url ?? '/').split('?')[0] ?? '/');
 
   if (path === '/__reload') {
     res.writeHead(200, {
@@ -50,9 +51,11 @@ const server = createServer(async (req, res) => {
   try {
     const ext = extname(file) || '.html';
     if (!extname(file)) file = join(file, 'index.html');
-    let body = await readFile(file);
-    if (ext === '.html') body = String(body).replace('</body>', RELOAD + '</body>');
-    res.writeHead(200, { 'Content-Type': TYPES[ext] || 'application/octet-stream', 'Cache-Control': 'no-store' });
+    const raw = await readFile(file);
+    const body: Buffer | string = ext === '.html'
+      ? String(raw).replace('</body>', RELOAD + '</body>')
+      : raw;
+    res.writeHead(200, { 'Content-Type': TYPES[ext] ?? 'application/octet-stream', 'Cache-Control': 'no-store' });
     res.end(body);
   } catch {
     res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -60,8 +63,10 @@ const server = createServer(async (req, res) => {
   }
 });
 
-let timer, running = false;
-async function rebuild(reason) {
+let timer: NodeJS.Timeout | undefined;
+let running = false;
+
+async function rebuild(reason: string): Promise<void> {
   if (running) return;
   running = true;
   const t0 = Date.now();
@@ -70,14 +75,14 @@ async function rebuild(reason) {
     console.log(`· rebuilt in ${Date.now() - t0}ms (${reason}) — reloading ${clients.length} client(s)`);
     for (const c of clients) c.write('data: reload\n\n');
   } catch (err) {
-    console.error(`! build failed (${reason}): ${err.message}`);
+    console.error(`! build failed (${reason}): ${(err as Error).message}`);
   } finally {
     running = false;
   }
 }
 
 for (const dir of ['src', 'content', 'public']) {
-  watch(join(ROOT, dir), { recursive: true }, (_e, name) => {
+  watch(join(ROOT, dir), { recursive: true }, (_event, name) => {
     clearTimeout(timer);
     timer = setTimeout(() => rebuild(`${dir}/${name}`), 120);
   });
