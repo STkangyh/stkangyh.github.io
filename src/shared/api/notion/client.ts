@@ -1,5 +1,5 @@
-import { REQUEST_TIMEOUT_MS } from '../../config/index.ts';
-import type { NotionBlock, NotionPage, QueryBody } from './types.ts';
+import { REQUEST_TIMEOUT_MS } from '../../config/index.js';
+import type { NotionBlock, NotionPage, QueryBody } from './types.js';
 
 const API = 'https://api.notion.com/v1';
 const VERSION = '2022-06-28';

@@ -1,3 +1,3 @@
-export { fromNotionPage, vet, byNewestFirst } from './model.ts';
-export { fetchReviews, fetchPublished, fetchFixture } from './api.ts';
-export type { Review, VetResult } from './types.ts';
+export { fromNotionPage, vet, byNewestFirst } from './model.js';
+export { fetchReviews, fetchPublished, fetchFixture } from './api.js';
+export type { Review, VetResult } from './types.js';

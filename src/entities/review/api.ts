@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path';
-import { NotionClient, renderBlocks, dropEmptySections } from '../../shared/api/notion/index.ts';
-import type { ImageResolver } from '../../shared/api/notion/index.ts';
-import { paths, notionEnv } from '../../shared/config/index.ts';
-import { slugify, dateLabel, hash, log } from '../../shared/lib/index.ts';
-import type { DownloadJobs } from '../../shared/lib/index.ts';
-import { fromNotionPage } from './model.ts';
-import type { Review } from './types.ts';
+import { NotionClient, renderBlocks, dropEmptySections } from '../../shared/api/notion/index.js';
+import type { ImageResolver } from '../../shared/api/notion/index.js';
+import { paths, notionEnv } from '../../shared/config/index.js';
+import { slugify, dateLabel, hash, log } from '../../shared/lib/index.js';
+import type { DownloadJobs } from '../../shared/lib/index.js';
+import { fromNotionPage } from './model.js';
+import type { Review } from './types.js';
 
 // Notion file URLs are signed and expire within the hour, so anything served
 // from their storage has to be copied into the build output.

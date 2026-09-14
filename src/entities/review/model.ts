@@ -1,7 +1,7 @@
-import { plain } from '../../shared/api/notion/index.ts';
-import type { NotionPage, PropertyValue, RichTextItem } from '../../shared/api/notion/index.ts';
-import { slugify, dateLabel, warn } from '../../shared/lib/index.ts';
-import type { Review, VetResult } from './types.ts';
+import { plain } from '../../shared/api/notion/index.js';
+import type { NotionPage, PropertyValue, RichTextItem } from '../../shared/api/notion/index.js';
+import { slugify, dateLabel, warn } from '../../shared/lib/index.js';
+import type { Review, VetResult } from './types.js';
 
 // --- Notion row -> review -----------------------------------------------
 const prop = (page: NotionPage, name: string): PropertyValue | undefined =>

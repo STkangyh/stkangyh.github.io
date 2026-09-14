@@ -1,7 +1,7 @@
-export { NotionClient } from './client.ts';
-export { richText, plain } from './rich-text.ts';
-export { renderBlocks, dropEmptySections } from './blocks.ts';
+export { NotionClient } from './client.js';
+export { richText, plain } from './rich-text.js';
+export { renderBlocks, dropEmptySections } from './blocks.js';
 export type {
   NotionBlock, NotionPage, PropertyValue, RichTextItem,
   ImageResolver, RenderFlags, RenderedBlocks,
-} from './types.ts';
+} from './types.js';

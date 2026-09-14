@@ -1,5 +1,5 @@
-import { esc, safeHref } from '../../lib/html.ts';
-import type { RichTextItem } from './types.ts';
+import { esc, safeHref } from '../../lib/html.js';
+import type { RichTextItem } from './types.js';
 
 // Notion rich text -> HTML, preserving annotations and links.
 export function richText(rt: RichTextItem[] = []): string {

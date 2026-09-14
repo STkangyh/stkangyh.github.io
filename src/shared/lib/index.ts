@@ -1,7 +1,7 @@
-export { esc, safeHref } from './html.ts';
-export { slugify, assignUniqueSlugs } from './slug.ts';
-export { dateLabel } from './date.ts';
-export { hash } from './hash.ts';
-export { log, warn } from './log.ts';
-export { downloadAll } from './assets.ts';
-export type { DownloadJobs } from './assets.ts';
+export { esc, safeHref } from './html.js';
+export { slugify, assignUniqueSlugs } from './slug.js';
+export { dateLabel } from './date.js';
+export { hash } from './hash.js';
+export { log, warn } from './log.js';
+export { downloadAll } from './assets.js';
+export type { DownloadJobs } from './assets.js';

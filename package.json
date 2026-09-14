@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node src/app/dev.ts",
-    "build": "node src/app/build.ts",
+    "dev": "tsc -p tsconfig.build.json && node .build/app/dev.js",
+    "build": "tsc -p tsconfig.build.json && node .build/app/build.js",
     "typecheck": "tsc --noEmit",
     "serve": "python3 -m http.server 5173 --directory dist"
   },
@@ -13,6 +13,14 @@
   },
   "devDependencies": {
     "@types/node": "^26.5.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/server": "^11.11.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   }
 }

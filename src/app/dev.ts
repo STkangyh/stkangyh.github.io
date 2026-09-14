@@ -7,8 +7,11 @@ import type { ServerResponse } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { watch } from 'node:fs';
 import { join, extname, resolve, sep } from 'node:path';
-import { build } from './build.ts';
-import { paths } from '../shared/config/index.ts';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { paths } from '../shared/config/index.js';
+
+const execFileAsync = promisify(execFile);
 
 const ROOT = paths.root;
 const DIST = paths.dist;
@@ -63,6 +66,15 @@ const server = createServer(async (req, res) => {
   }
 });
 
+// build.tsx contains JSX, which Node cannot load directly (confirmed — Node
+// only strips *type* annotations, it does not transform JSX syntax). So a
+// rebuild here shells out to the same two-step pipeline `npm run build`
+// uses — compile with tsc, then run the compiled output — rather than
+// importing build() in-process the way the pre-React dev server did.
+const TSC = join(ROOT, 'node_modules', '.bin', 'tsc');
+const runBuild = (): Promise<{ stdout: string; stderr: string }> =>
+  execFileAsync('sh', ['-c', `${TSC} -p tsconfig.build.json && node .build/app/build.js`], { cwd: ROOT });
+
 let timer: NodeJS.Timeout | undefined;
 let running = false;
 
@@ -71,11 +83,15 @@ async function rebuild(reason: string): Promise<void> {
   running = true;
   const t0 = Date.now();
   try {
-    await build();
+    const { stdout, stderr } = await runBuild();
+    process.stdout.write(stdout);
+    if (stderr) process.stderr.write(stderr);
     console.log(`· rebuilt in ${Date.now() - t0}ms (${reason}) — reloading ${clients.length} client(s)`);
     for (const c of clients) c.write('data: reload\n\n');
   } catch (err) {
-    console.error(`! build failed (${reason}): ${(err as Error).message}`);
+    const e = err as { stdout?: string; stderr?: string; message: string };
+    if (e.stdout) process.stdout.write(e.stdout);
+    console.error(`! build failed (${reason}):\n${e.stderr ?? e.message}`);
   } finally {
     running = false;
   }
@@ -92,5 +108,5 @@ await rebuild('startup');
 server.listen(PORT, () => {
   console.log(`\n  dev server  http://localhost:${PORT}`);
   console.log(`  watching    src/ content/ public/`);
-  console.log(`  note        edits to src/app/dev.ts itself need a restart\n`);
+  console.log(`  note        edits to src/app/dev.ts itself need a restart (Ctrl-C, npm run dev)\n`);
 });

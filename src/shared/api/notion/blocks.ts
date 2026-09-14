@@ -1,6 +1,6 @@
-import { esc, safeHref } from '../../lib/html.ts';
-import { richText, plain } from './rich-text.ts';
-import type { ImageResolver, NotionBlock, RenderedBlocks, RenderFlags } from './types.ts';
+import { esc, safeHref } from '../../lib/html.js';
+import { richText, plain } from './rich-text.js';
+import type { ImageResolver, NotionBlock, RenderedBlocks, RenderFlags } from './types.js';
 
 // A heading whose section holds nothing is an unfinished template, not content.
 // Drop it before rendering: walk from each heading to the next one at the same

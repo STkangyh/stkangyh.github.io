@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { log } from './log.ts';
-import { REQUEST_TIMEOUT_MS } from '../config/index.ts';
+import { log } from './log.js';
+import { REQUEST_TIMEOUT_MS } from '../config/index.js';
 
 /** Local filename -> remote URL. */
 export type DownloadJobs = Map<string, string>;
