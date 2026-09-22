@@ -33,7 +33,7 @@
     {
       "name": "coad-mini",
       "tagline": "continual learning for streaming video action recognition",
-      "body": "End-to-end pipeline learning new actions over 8 sequential stages without catastrophic forgetting, plus few-shot enrollment with live model hot-swap and OOD detection. Shipped as a FastAPI webcam demo.",
+      "body": "Class-incremental video action recognition that registers new classes with no gradient steps, on a frozen CLIP backbone with a closed-form covariance head. Few-shot enrollment with live model hot-swap and OOD detection, shipped as a FastAPI webcam demo.",
       "stack": [
         "CLIP ViT-B/32",
         "FeCAM",
