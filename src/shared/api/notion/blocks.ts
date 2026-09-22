@@ -1,6 +1,6 @@
 import { esc, safeHref } from '../../lib/html.js';
 import { richText, plain } from './rich-text.js';
-import type { ImageResolver, NotionBlock, RenderedBlocks, RenderFlags } from './types.js';
+import type { ImageResolver, NotionBlock, RenderedBlocks, RenderFlags, RichTextItem } from './types.js';
 
 // A heading whose section holds nothing is an unfinished template, not content.
 // Drop it before rendering: walk from each heading to the next one at the same
@@ -12,6 +12,8 @@ function producesOutput(b: NotionBlock): boolean {
   if (HEADING_LEVEL[b.type]) return false;
   if (b.type === 'paragraph') return plain(b['paragraph'].rich_text).trim() !== '';
   if (b.type === 'table_of_contents' || b.type === 'breadcrumb') return false;
+  if (b.type === 'table') return Boolean(b.__children?.length);
+  if (b.type === 'table_row') return false;
   if (b.type === 'column_list' || b.type === 'synced_block' || b.type === 'column') {
     return Boolean(b.__children?.some(producesOutput));
   }
@@ -143,6 +145,21 @@ export function renderBlocks(
       case 'synced_block':
         out.push(nestedOf(b));
         break;
+      case 'table': {
+        const rows = (b.__children ?? []).filter(r => r.type === 'table_row');
+        if (!rows.length) break;
+        const cellsOf = (r: NotionBlock): RichTextItem[][] => r['table_row'].cells ?? [];
+        const renderRow = (r: NotionBlock, cell: 'th' | 'td'): string =>
+          `<tr>${cellsOf(r).map(c => `<${cell}>${richText(c)}</${cell}>`).join('')}</tr>`;
+        const header = b['table'].has_column_header && rows[0]
+          ? `<thead>${renderRow(rows[0] as NotionBlock, 'th')}</thead>` : '';
+        const body = (b['table'].has_column_header ? rows.slice(1) : rows)
+          .map(r => renderRow(r, 'td')).join('');
+        // Wide tables scroll inside their own box rather than widening the page.
+        out.push(`<div class="tablewrap"><table>${header}<tbody>${body}</tbody></table></div>`);
+        break;
+      }
+      case 'table_row':        // consumed by its parent table
       case 'table_of_contents':
       case 'breadcrumb':
         break;
