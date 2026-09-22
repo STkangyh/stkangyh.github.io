@@ -11,9 +11,9 @@
   "lede": "Undergraduate researcher building video models that keep learning after deployment — on CPUs and embedded GPUs, not clusters. I read a lot of papers about it, and write down what actually held up.",
   "metrics": [
     {
-      "value": "+14.1",
-      "unit": " %p",
-      "label": "A-GEM accuracy gain"
+      "value": "0.1",
+      "unit": " s",
+      "label": "head fit time"
     },
     {
       "value": "0.17",
